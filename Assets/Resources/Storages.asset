@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043bf0b80addb5a4d8af00709754b992, type: 3}
+  m_Name: Storages
+  m_EditorClassIdentifier: 
+  _animatronicsDifficulty: {fileID: 11400000, guid: b2e842b6cdebffc4fa6f482c4afc2504, type: 2}
+  _cameraImagesStorage: {fileID: 11400000, guid: 6cbe03ed192882c46928e7671fac1796, type: 2}
+  _soundStorage: {fileID: 11400000, guid: f7d21375596a5e74b96e3db3a92cb8c2, type: 2}
