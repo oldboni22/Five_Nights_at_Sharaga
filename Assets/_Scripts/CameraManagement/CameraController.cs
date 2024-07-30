@@ -19,14 +19,11 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
     [SerializeField] private AudioClip _blipSound;
     [SerializeField] private AudioClip _cameraToggleSound;
 
-    [SerializeField] private GameObject _cameraPanel;
-    [SerializeField] private GameObject _actionPanel;
-
-    private CameraButton _lastButton;
-
     [SerializeField] private string _startCameraId;
     private RoomHandler _curRom;
     private string _lastCameraId;
+
+    private bool _enabled = false;
     string LastCameraId
     {
         get
@@ -51,20 +48,16 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
 
     public void ToggleCamera()
     {
-        bool enablePanel = !_cameraPanel.activeInHierarchy;
-
+        _enabled = !_enabled;
         _audioPool.PlayAudio(_cameraToggleSound);
-        _actionPanel.SetActive(enablePanel);
 
-        if (enablePanel)
+        if (_enabled)
         {
-            _cameraPanel.SetActive(true);
             OpenCamera(LastCameraId);
         }
         else
         {
             LastCameraId = _curRom.Id;
-            _cameraPanel.SetActive(false);
             OpenCamera(_startCameraId);
         }
 

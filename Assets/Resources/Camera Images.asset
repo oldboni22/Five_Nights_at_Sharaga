@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd0945c8329a2cd4990bf0f8346ba393, type: 3}
   m_Name: Camera Images
   m_EditorClassIdentifier: 
-  _images:
-  - {fileID: 11400000, guid: 0fc50a9f1a329344b91c5812af17279c, type: 2}
-  - {fileID: 11400000, guid: 7b0f68b769a935b44bbb56f8739c6676, type: 2}
-  - {fileID: 11400000, guid: cf0ed917d5b92de479a1911ea26bfcad, type: 2}
+  _arrays:
+  - {fileID: 11400000, guid: f084d6254a47d104084290e2bec44098, type: 2}
+  - {fileID: 11400000, guid: b5961b101b90e1b46b8dcf88d84a7957, type: 2}
+  - {fileID: 11400000, guid: 9cbf76d43846c434f921169cfe4cee20, type: 2}

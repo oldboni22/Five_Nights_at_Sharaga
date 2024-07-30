@@ -81,6 +81,10 @@ public abstract class Animatronic : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} - detected");
     }
+    public virtual void OnCameraLeave()
+    {
+        Debug.Log($"{gameObject.name} - detected");
+    }
     #endregion
 
 

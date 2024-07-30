@@ -9,6 +9,7 @@ using System;
 public class ActionPointsManager : IActionPointsManager
 {
     private event Action<float,int> OnActionPointsChanged;
+    private ICameraControler _cameraControler;
 
     AudioClip _sound;
     private readonly string _soundId = "AP1";
@@ -18,14 +19,15 @@ public class ActionPointsManager : IActionPointsManager
     private int _points;
 
     private float _pointCharge;
-    private readonly float _pointGain = 0.16f;
+    private readonly float _pointGain = 0.125f;
 
 
     [Inject] 
-    public void Inject(SoundStorage storage, AudioPlayer.Pool audioPool)
+    public void Inject(SoundStorage storage, AudioPlayer.Pool audioPool, ICameraControler cameraControler)
     {
         _pool = audioPool;
         _sound = storage.GetMemberById(_soundId).Clip;
+        _cameraControler = cameraControler;
     }
 
     void ChargePoint()
@@ -53,7 +55,7 @@ public class ActionPointsManager : IActionPointsManager
         OnActionPointsChanged += @delegate;
     }
 
-    public bool SpendPoints(int points)
+    bool SpendPoints(int points)
     {
         if(_points - points >= 0)
         {
@@ -66,11 +68,32 @@ public class ActionPointsManager : IActionPointsManager
 
         return false;
     }
+
+    public bool Gas()
+    {
+        if (SpendPoints(1))
+        {
+            _cameraControler.CurRoom.GasRoom();
+            return true;
+        }
+        return false;
+    }
+
+    public bool Repair()
+    {
+        if (SpendPoints(2))
+        {
+            _cameraControler.CurRoom.EnableCamera();
+            return true;
+        }
+        return false;
+    }
 }
 
 public interface IActionPointsManager : IFixedUpdateable
 {
     public void AddEventListener(Action<float,int> @delegate);
-    public bool SpendPoints(int points);
+    public bool Gas();
+    public bool Repair();
    
 }

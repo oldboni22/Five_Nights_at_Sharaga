@@ -1,5 +1,3 @@
-
-
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -9,8 +7,12 @@ using System.Collections.Generic;
 
 public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
 {
-    private IAudioListenerController _audioListenerController;
 
+    #region parameters
+    private IAudioListenerController _audioListenerController;
+    private ICameraButtonsController _cameraButtonsController;
+    private CameraButton _cameraButton;
+    
     [SerializeField] private DigitalGlitch _glitch;
     [SerializeField] private string _id;
     public string Id => _id;
@@ -28,16 +30,22 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
     [SerializeField] private Camera _camera;
     [SerializeField] Image _image;
 
-    [Inject] public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages)
+    [Inject] public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages, ICameraButtonsController cameraButtonsController)
     {
         _audioListenerController = audioListenerController;
         _imageHandler = new RoomImageHandler(cameraImages.GetMemberById(_id), _image);
+
+        _cameraButtonsController = cameraButtonsController;
     }
 
     public void SetCameraBreakTime(float time)
     {
         _cameraBreakTime = time;
     }
+
+    #endregion
+
+    #region Interfaces
     public void OnAwake()
     {
         _room = new Room(_id);
@@ -47,6 +55,9 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
     {
         HandleCameraBreak();
     }
+    #endregion
+
+    #region Camera-visuals
     void HandleCameraBreak()
     {
         if (_enabled is false)
@@ -59,7 +70,36 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
             _curCameraBreak = 0;
         }
     }
+    public void DisableCamera()
+    {
+        _glitch.intensity = 1;
+        _enabled = false;
+        _cameraButtonsController.SetColor(_id, CameraButtonColor.broken);
 
+        if (_camera.enabled)
+            _audioListenerController.Resset();
+    }
+    public void EnableCamera()
+    {
+        _audioListenerController.LoccateTo(transform.position);
+        _glitch.intensity = .1f;
+        _enabled = true;
+        _cameraButtonsController.SetColor(_id, CameraButtonColor.fine);
+        StartCoroutine(CameraOpenedGlitch(.15f));
+    }
+
+    IEnumerator CameraOpenedGlitch(float delay)
+    {
+        _glitch.intensity = 1;
+        yield return new WaitForSeconds(delay);
+
+
+        if (_enabled)
+            _glitch.intensity = .1f;
+    }
+    #endregion
+
+    #region Animatronic-related
     public void AnimatronicLeave(Animatronic animatronic)
     {
         _room.AnimatronicLeave(animatronic);
@@ -72,6 +112,7 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         _imageHandler.HandleAnimatronicEnter(animatronic.Id);
         StartCoroutine(CameraOpenedGlitch(.22f));
     }
+    #endregion
 
     public void ConnectTo()
     {
@@ -95,34 +136,11 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
 
     public void DisconnectFrom()
     {
+        _room.OnCameraLeft();
         _camera.enabled = false;
     }
 
-    public void DisableCamera()
-    {
-        _glitch.intensity = 1;
-        _enabled = false;
-
-        if(_camera.enabled)
-            _audioListenerController.Resset();
-    }
-    public void EnableCamera()
-    {
-        _audioListenerController.LoccateTo(transform.position);
-        _glitch.intensity = .1f;
-        _enabled = true;
-        StartCoroutine(CameraOpenedGlitch(.15f));
-    }
-
-    IEnumerator CameraOpenedGlitch(float delay)
-    {
-        _glitch.intensity = 1;
-        yield return new WaitForSeconds(delay);
-
-
-        if (_enabled)
-            _glitch.intensity = .1f;
-    }
+    
 
     internal class RoomImageHandler
     {
@@ -155,6 +173,8 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         }
         internal void HandleAnimatronicLeave(string animatronicId)
         {
+            _curAnimatronics.Remove(animatronicId);
+
             if (animatronicId != _curId)
                 return;
 

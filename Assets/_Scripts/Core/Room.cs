@@ -24,6 +24,11 @@ public class Room
         foreach (var animatronic in _animatronics)
             animatronic.OnCameraDetect();
     }
+    public void OnCameraLeft()
+    {
+        foreach (var animatronic in _animatronics)
+            animatronic.OnCameraLeave();
+    }
 
     #region AnimatronicManagment
 
