@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
+using System;
 
 public class SurrondAudioPlayer : MonoBehaviour
 {
     private string _soundId;
     public string SoundId => _soundId;
     private Pool _pool;
-    [SerializeField] private AudioSource _source;
+    [SerializeField] internal AudioSource _source;
 
     public void SetPool(Pool pool) => _pool = pool;
 
@@ -19,12 +20,14 @@ public class SurrondAudioPlayer : MonoBehaviour
         float duration = clip.length;
         StartCoroutine(StartPlaying(duration, clip));
     }
-    public void PlayAudio(float duration ,AudioClip clip, Vector2 position)
+    public void LoopAudio(AudioClip clip, Vector2 position)
     {
         transform.position = position;
-        StartCoroutine(StartPlaying(duration, clip));
+        _source.clip = clip;
+        _source.loop = true;
+        _soundId = clip.name;
+        _source.Play();
     }
-
     public void StopPlaying()
     {
         StopAllCoroutines();
@@ -44,6 +47,8 @@ public class SurrondAudioPlayer : MonoBehaviour
 
     private void Reset()
     {
+        _source.volume = 1.0f;
+        _source.loop = false;
         _soundId = null;
         _source.Stop();
         _source.clip = null;
@@ -62,25 +67,26 @@ public class SurrondAudioPlayer : MonoBehaviour
             item.SetPool(this);
         }
 
-
-        public void PlayAudio(AudioClip clip, Vector2 position) 
+        public void PlayAudio(AudioClip clip, Vector2 position,float volume,int prio) 
         {
             var player = this.Spawn();
+            player._source.priority = prio;
+            player._source.volume = volume;
             player.PlayAudio(clip, position);
         }
-        public void PlayAudio(float duration,AudioClip clip, Vector2 position) 
+        public void StopAudio(string clipName)
         {
-            var player = this.Spawn();
-            player.PlayAudio(duration,clip, position);
-        }
-        public void StopAudio(AudioClip clip)
-        {
-            var soundId = clip.name;
-           
-            foreach(var player in _players.Where(x => x.SoundId == soundId))
+            foreach (var player in _players.Where(x => x.SoundId == clipName))
             {
                 player.StopPlaying();
             }
+        }
+        public void LoopAudio(AudioClip clip, Vector2 position, float volume, int prio)
+        {
+            var player = Spawn();
+            player._source.priority = prio;
+            player._source.volume = volume;
+            player.LoopAudio(clip, position);
         }
 
     }

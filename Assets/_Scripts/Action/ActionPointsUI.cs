@@ -5,21 +5,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class ActionPointsUI : MonoBehaviour, IAwakable
+public class ActionPointsUI : MonoBehaviour
 {
-    [Inject] private IActionPointsManager _manager;
     [SerializeField] private Slider _slider;
     [SerializeField] private TMP_Text _text;
 
-    public void OnAwake()
+    [Inject]
+    public void Inject(IActionPointsManager manager)
     {
-        _manager.AddEventListener(UpdateUi);
+        manager.AddOnChargeEventListener(UpdateCharge);
+        manager.AddOnPointsEventListener(UpdatePoints);
     }
 
+    void UpdatePoints(int points)
+    {
+        _text.text = $"{points}";
+    }
 
-    void UpdateUi(float charge, int points)
+    void UpdateCharge(float charge)
     {
         _slider.value = charge;
-        _text.text = $"{points}";
     }
 }

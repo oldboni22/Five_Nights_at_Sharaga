@@ -4,11 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using System;
+public interface IActionPointsManager : IFixedUpdateable
+{
+    public void AddOnChargeEventListener(Action<float> @delegate);
+    public void AddOnPointsEventListener(Action<int> @delegate);
+    public bool Gas(int cost);
+    public bool Repair(int cost);
 
+}
 
 public class ActionPointsManager : IActionPointsManager
 {
-    private event Action<float,int> OnActionPointsChanged;
+    private event Action<float> _onActionChargeChanged;
+    private event Action<int> _onActionPointsChanged;
     private ICameraControler _cameraControler;
 
     AudioClip _sound;
@@ -39,10 +47,11 @@ public class ActionPointsManager : IActionPointsManager
         {
             _pointCharge = 0;
             _points++;
-            _pool.PlayAudio(_sound);
+            _pool.PlayAudio(_sound,1,100);
+            _onActionPointsChanged?.Invoke(_points);
         }
         
-        OnActionPointsChanged?.Invoke(_pointCharge,_points);
+        _onActionChargeChanged?.Invoke(_pointCharge);
     }
 
     public void OnFixedUpdate()
@@ -50,17 +59,12 @@ public class ActionPointsManager : IActionPointsManager
         ChargePoint();
     }
 
-    public void AddEventListener(Action<float, int> @delegate)
-    {
-        OnActionPointsChanged += @delegate;
-    }
-
     bool SpendPoints(int points)
     {
         if(_points - points >= 0)
         {
             _points -= points;
-            OnActionPointsChanged?.Invoke(_pointCharge, _points);
+            _onActionPointsChanged?.Invoke(_points);
 
             return true;
         }
@@ -69,9 +73,9 @@ public class ActionPointsManager : IActionPointsManager
         return false;
     }
 
-    public bool Gas()
+    public bool Gas(int cost)
     {
-        if (SpendPoints(1))
+        if (SpendPoints(cost))
         {
             _cameraControler.CurRoom.GasRoom();
             return true;
@@ -79,21 +83,24 @@ public class ActionPointsManager : IActionPointsManager
         return false;
     }
 
-    public bool Repair()
+    public bool Repair(int cost)
     {
-        if (SpendPoints(2))
+        if (SpendPoints(cost))
         {
             _cameraControler.CurRoom.EnableCamera();
             return true;
         }
         return false;
     }
+
+    public void AddOnChargeEventListener(Action<float> @delegate)
+    {
+        _onActionChargeChanged += @delegate;
+    }
+
+    public void AddOnPointsEventListener(Action<int> @delegate)
+    {
+        _onActionPointsChanged += @delegate;
+    }
 }
 
-public interface IActionPointsManager : IFixedUpdateable
-{
-    public void AddEventListener(Action<float,int> @delegate);
-    public bool Gas();
-    public bool Repair();
-   
-}

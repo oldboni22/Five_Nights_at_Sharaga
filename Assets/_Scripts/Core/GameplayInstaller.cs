@@ -6,14 +6,18 @@ public class GameplayInstaller : MonoInstaller
     [SerializeField] private RoomsController _roomsController;
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private CameraButtonsController _cameraButtonsController;
+    [SerializeField] private AudioListenerController _audioListenerController;
 
     [SerializeField] GameObject _audioPrefab;
     [SerializeField] GameObject _3DAudioPrefab;
-    [SerializeField] private AudioListenerController _audioListenerController;
+    [SerializeField] GameObject _overlayPrebab;
+
+    
 
     public override void InstallBindings()
     {
-        Container.Bind<IPlayer>().To<Player>().AsSingle().NonLazy();
+        Container.Bind<IPlayer>().To<Player>().FromNew().AsSingle().NonLazy();
+        Container.Bind<IServiceManager>().To<ServiceManager>().FromNew().AsSingle().NonLazy();
 
         Container.Bind<IActionPointsManager>().To<ActionPointsManager>().AsSingle().NonLazy(); 
         Container.Bind<IClock>().To<Clock>().AsSingle().NonLazy();
@@ -26,6 +30,7 @@ public class GameplayInstaller : MonoInstaller
 
         Container.BindMemoryPool<AudioPlayer,AudioPlayer.Pool>().WithInitialSize(3).FromComponentInNewPrefab(_audioPrefab).UnderTransformGroup("Audio").NonLazy();
         Container.BindMemoryPool<SurrondAudioPlayer, SurrondAudioPlayer.Pool>().WithInitialSize(3).FromComponentInNewPrefab(_3DAudioPrefab).UnderTransformGroup("3DAudio").NonLazy();
+        Container.BindMemoryPool<OverlayImage, OverlayImage.Pool>().WithInitialSize(3).FromComponentInNewPrefab(_overlayPrebab).UnderTransformGroup("Camera Overlays");
         
     }
 }

@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3d88186b6c8aa54da4b7ad84534d67f, type: 3}
-  m_Name: Test
+  m_Name: test
   m_EditorClassIdentifier: 
-  _id: 1
-  _failedTicksTreshold: 3
-  _difficultyLevel: 35
+  _id: test
+  _difficultyLevel: 55

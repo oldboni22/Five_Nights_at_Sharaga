@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
     public void ToggleCamera()
     {
         _enabled = !_enabled;
-        _audioPool.PlayAudio(_cameraToggleSound);
+        _audioPool.PlayAudio(_cameraToggleSound, 1, 100);
 
         if (_enabled)
         {
@@ -73,7 +73,7 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
         if(cameraId != _startCameraId)
         {
             _buttonsController.LockButtonById(cameraId);
-            _audioPool.PlayAudio(_blipSound);
+            _audioPool.PlayAudio(_blipSound, 1, 100);
         }
             
     }

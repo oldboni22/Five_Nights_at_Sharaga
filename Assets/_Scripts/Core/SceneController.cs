@@ -6,6 +6,7 @@ using Zenject;
 
 public class SceneController : MonoBehaviour 
 {
+    [Inject] private IServiceManager _service;
     [Inject] private IClock _clock;
     [Inject] private IActionPointsManager _actionPointsManager;
 
@@ -23,6 +24,8 @@ public class SceneController : MonoBehaviour
         _fixedUpdateables = GetComponentsInChildren<IFixedUpdateable>();
         _clockables = GetComponentsInChildren<IClockable>();
 
+
+        _clock.OnAwake();
         foreach (var awakeable in _awakeables)
         {
             awakeable.OnAwake();
@@ -31,14 +34,15 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        _clock.SetTimeToTick(_clockRate);
         foreach (var clockable in _clockables)
             _clock.Add(clockable);
-        
-        StartCoroutine(Tick());
     }
 
     private void Update()
     {
+        _service.OnUpdate();
+        _clock.OnUpdate();
         foreach(var updateable in _updateables)
             updateable.OnUpdate();
     }
@@ -50,10 +54,4 @@ public class SceneController : MonoBehaviour
             updateable.OnFixedUpdate();
     }
 
-    IEnumerator Tick()
-    {
-        yield return new WaitForSeconds(_clockRate);
-        _clock.Tick();
-        StartCoroutine(Tick());
-    }
 }

@@ -8,9 +8,6 @@ public class AnimatronicDifficulty : ScriptableObject, IStoreable
     [SerializeField] string _id;
     public string Id => _id;
 
-    [SerializeField] private int _failedTicksTreshold;
-    [SerializeField] private int _difficultyLevel;
-
-    public int FailedTicksTreshold => _failedTicksTreshold;
-    public int DifficultyLevel => _difficultyLevel;
+    [SerializeField] private ushort _difficultyLevel;
+    public ushort DifficultyLevel => _difficultyLevel;
 }

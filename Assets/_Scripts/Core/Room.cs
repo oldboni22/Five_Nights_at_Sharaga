@@ -14,8 +14,8 @@ public class Room
         _id = id;
     }
     public void OnGas()
-    { 
-        foreach(var animatronic in _animatronics)
+    {
+        foreach(var animatronic in _animatronics.ToArray())
             animatronic.OnGas();
     }
 

@@ -19,7 +19,7 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
 
     public void OnAwake()
     {
-        _startX = _transform.localPosition.x;
+        _startX = _transform.localPosition.x;   
     }
 
     public void OnClick()
@@ -37,6 +37,7 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
     private void OpenMenu()
     {
         _blocker.SetActive(true);
+        _transform.gameObject.SetActive(true);
 
         _enabled = true;
         _transform.DOKill();
@@ -49,6 +50,6 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
 
         _enabled = false;
         _transform.DOKill();
-        _transform.DOLocalMoveX(_startX, _duration);
+        _transform.DOLocalMoveX(_startX, _duration).OnComplete(() => _transform.gameObject.SetActive(false));
     }
 }

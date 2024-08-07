@@ -15,3 +15,7 @@ MonoBehaviour:
   _animatronicsDifficulty: {fileID: 11400000, guid: b2e842b6cdebffc4fa6f482c4afc2504, type: 2}
   _cameraImagesStorage: {fileID: 11400000, guid: 6cbe03ed192882c46928e7671fac1796, type: 2}
   _soundStorage: {fileID: 11400000, guid: f7d21375596a5e74b96e3db3a92cb8c2, type: 2}
+  _ambienceStorage: {fileID: 11400000, guid: d38e1a778e8415146a51ff0214cca0f6, type: 2}
+  _pipkiPopki: {fileID: 11400000, guid: df36b1b625627244ca39e1ac6093f867, type: 2}
+  _newD: {fileID: 11400000, guid: 84efc0e98c0f9a641b1b5faf15e52145, type: 2}
+  _randomSounds: {fileID: 11400000, guid: cb86497deca12e84398a3a5401d98ea1, type: 2}

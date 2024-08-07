@@ -4,14 +4,19 @@ using Zenject;
 using Kino;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
+public struct RoomParams
+{
+    public float cameraBreakTime;
+}
+public class RoomHandler : MonoBehaviour, IUpdateable
 {
 
-    #region parameters
+    #region variables
     private IAudioListenerController _audioListenerController;
     private ICameraButtonsController _cameraButtonsController;
-    private CameraButton _cameraButton;
+    private OverlayImage.Pool _overlayPool;
     
     [SerializeField] private DigitalGlitch _glitch;
     [SerializeField] private string _id;
@@ -25,31 +30,30 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
     private Room _room;
     private RoomImageHandler _imageHandler;
 
-
-
     [SerializeField] private Camera _camera;
+
     [SerializeField] Image _image;
 
-    [Inject] public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages, ICameraButtonsController cameraButtonsController)
+    [Inject] public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages, ICameraButtonsController cameraButtonsController, OverlayImage.Pool overlayPool, IRoomsController roomsController)
     {
         _audioListenerController = audioListenerController;
         _imageHandler = new RoomImageHandler(cameraImages.GetMemberById(_id), _image);
 
         _cameraButtonsController = cameraButtonsController;
+        _overlayPool = overlayPool;
+
+        _room = new Room(_id);
+        roomsController.AddRoom(this);
     }
 
-    public void SetCameraBreakTime(float time)
+    public void SetParams(RoomParams @params)
     {
-        _cameraBreakTime = time;
+        _cameraBreakTime = @params.cameraBreakTime;
     }
 
     #endregion
 
     #region Interfaces
-    public void OnAwake()
-    {
-        _room = new Room(_id);
-    }
 
     public void OnUpdate()
     {
@@ -76,18 +80,21 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         _enabled = false;
         _cameraButtonsController.SetColor(_id, CameraButtonColor.broken);
 
+        _room.OnCameraLeft();
         if (_camera.enabled)
             _audioListenerController.Resset();
     }
     public void EnableCamera()
     {
         _audioListenerController.LoccateTo(transform.position);
+
         _glitch.intensity = .1f;
         _enabled = true;
         _cameraButtonsController.SetColor(_id, CameraButtonColor.fine);
+        _room.OnCameraOpened();
+
         StartCoroutine(CameraOpenedGlitch(.15f));
     }
-
     IEnumerator CameraOpenedGlitch(float delay)
     {
         _glitch.intensity = 1;
@@ -97,6 +104,22 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         if (_enabled)
             _glitch.intensity = .1f;
     }
+
+
+    public RoomHandler SetOverlay(Canvas canvas)
+    {
+        canvas.worldCamera = _camera;
+        return this;
+    }
+
+    public void SetOverlayImage(SetOverlayImageParams @params)
+    {
+        _overlayPool.SetOverlay(@params);
+    }
+    public void RemoveOverlayImage(string id)
+    {
+        _overlayPool.RemoveById(id, this);
+    }
     #endregion
 
     #region Animatronic-related
@@ -105,12 +128,17 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         _room.AnimatronicLeave(animatronic);
         _imageHandler.HandleAnimatronicLeave(animatronic.Id);
         StartCoroutine(CameraOpenedGlitch(.22f));
+
+        animatronic.OnCameraLeave();
     }
     public void AnimatronicEnter(Animatronic animatronic)
     {
         _room.AnimatronicEnter(animatronic);
         _imageHandler.HandleAnimatronicEnter(animatronic.Id);
         StartCoroutine(CameraOpenedGlitch(.22f));
+
+        if (_camera.enabled)
+            animatronic.OnCameraDetect();
     }
     #endregion
 
@@ -123,7 +151,8 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
         else
             _audioListenerController.Resset();
 
-        _room.OnCameraOpened();
+        if(_enabled)
+            _room.OnCameraOpened();
 
         if (_glitch != null)
             StartCoroutine(CameraOpenedGlitch(.3f));
@@ -136,7 +165,10 @@ public class RoomHandler : MonoBehaviour, IAwakable, IUpdateable
 
     public void DisconnectFrom()
     {
-        _room.OnCameraLeft();
+
+        if(_enabled)
+            _room.OnCameraLeft();
+
         _camera.enabled = false;
     }
 

@@ -23,4 +23,5 @@ public class CameraButton : MonoBehaviour
     public void BlockButton() => _button.interactable = false;
     public void UnBlockButton() => _button.interactable = true;
     public void SetColor(Color color) => _button.image.color = color;
+
 }

@@ -1,9 +1,9 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class AnimatronicsController : MonoBehaviour, IClockable, IAwakable
+public class AnimatronicsController : MonoBehaviour, IClockable, IAwakable, IUpdateable
 {
     [Inject] private AnimatronicsDifficulty _animatronicsDifficulty;
     [SerializeField] private List<Animatronic> _animatronics;
@@ -11,20 +11,29 @@ public class AnimatronicsController : MonoBehaviour, IClockable, IAwakable
     #region Interfaces
     public void OnAwake()
     {
+        var difficulty = _animatronicsDifficulty.GetMemberById("test");
         foreach (var animatronic in _animatronics)
         {
-            Debug.Log(animatronic.Id);
-            var difficulty = _animatronicsDifficulty.GetMemberById(animatronic.Id);
-            animatronic.SetParameters(difficulty);
+            //Make difficulty based on night
+            animatronic.SetDifficulty(difficulty.DifficultyLevel);
 
             Debug.Log($"{animatronic.gameObject.name} - awake");
         }
     }
+
+    public void OnUpdate()
+    {
+        foreach (var ani in _animatronics)
+            ani.OnUpdate();
+    }
+
     public void Tick()
     {
-        int random = Random.Range(0, 120);
         foreach (var animatromic in _animatronics)
+        {
+            ushort random = Convert.ToUInt16(UnityEngine.Random.Range(0, 125));
             animatromic.Turn(random);
+        }
     }
 
     #endregion

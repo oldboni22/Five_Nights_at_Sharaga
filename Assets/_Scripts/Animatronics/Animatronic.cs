@@ -1,58 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+
 using UnityEngine;
-using UnityEngine.Accessibility;
+
 using Zenject;
 
-public abstract class Animatronic : MonoBehaviour
+public abstract class Animatronic : MonoBehaviour, IUpdateable
 {
     #region paremeters
 
-    [Inject] private IRoomsController _roomsController;
-    [SerializeField] private string _id;
+    [SerializeField] protected ushort _ticksToAction;
+    [SerializeField] protected ushort _failedTicksLimit;
+    protected ushort _succeded;
+
+    protected bool _doTurns = true;
+    protected bool _countSucces = true;
+
+    [Inject] protected IRoomsController _roomsController;
+    [SerializeField] protected string _id;
     public string Id => _id;
     protected int _failedTicks;
-    protected int _failedTicksTreshold;
-    protected int _difficultyLevel;
+    private ushort _difficultyLevel;
     protected RoomHandler _curRoom;
 
     
-    public virtual void SetParameters(AnimatronicDifficulty difficulty)
+    public void SetDifficulty(ushort difficulty)
     {
-        _failedTicksTreshold = difficulty.FailedTicksTreshold;
-        _difficultyLevel = difficulty.DifficultyLevel;
+        _difficultyLevel = difficulty;
     }
 
     #endregion
 
     #region Turn
 
-    public void Turn(int random)
+    public void Turn(ushort random)
     {
+
+        if (_doTurns is false)
+            return;
+
+        Debug.Log(_id + random + " - Random");
         if(_difficultyLevel > random)
             OnSucceedTurn();
         else
             OnFailedTurn();
 
-        Debug.Log($"{gameObject.name} - Turn");
     }
     protected virtual void OnFailedTurn()
     {
         _failedTicks++;
-        Debug.Log($"{gameObject.name} - Turn failed, failed turns - {_failedTicks}");
+        Debug.Log($"{_id} - Turn failed, failed turns - {_failedTicks}");
 
-        if(_failedTicks == _failedTicksTreshold)
+        if(_failedTicks >= _failedTicksLimit)
         {
-            Debug.Log($"{gameObject.name} - Fail treshhold is reached, succes triggered anyway...");
-            OnSucceedTurn();
-            _failedTicks = 0;
+            OnFailedLimitReached();
         }
     }
     protected virtual void OnSucceedTurn()
     {
-        Debug.Log($"{gameObject.name} - Turn succeed!");
-    }
+        if (_countSucces is false)
+            return;
 
+        _succeded++;
+        if (_succeded >= _ticksToAction)
+            Action();
+        Debug.Log($"{_id} - Turn succeed!");
+    }
+    protected virtual void OnFailedLimitReached()
+    {
+        Debug.Log(_id + "Failed linit reached");
+        OnSucceedTurn();
+        _failedTicks = 0;
+    }
+    protected virtual void Action() 
+    { 
+        Debug.Log(_id + "Action !");
+        _failedTicks = 0;
+        _succeded = 0;
+    }
     #endregion
 
     #region RoomManagment
@@ -85,6 +109,8 @@ public abstract class Animatronic : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} - detected");
     }
+
+    public virtual void OnUpdate() { }
     #endregion
 
 

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 423c3bfb18fce1c47b74a88a3a718ff0, type: 3}
+  m_Name: Ambience Storage
+  m_EditorClassIdentifier: 
+  _saneClips:
+  - {fileID: 8300000, guid: d1fcff3559a6d7c4cb6e7eea1cf30f72, type: 3}
+  - {fileID: 8300000, guid: bc1b87d3c621abb478e96248f43e24fc, type: 3}
+  - {fileID: 8300000, guid: 5151f99157d53de4abf3665c25901e33, type: 3}
+  _insaneClips:
+  - {fileID: 8300000, guid: 60404aa6af87b2f46b3a560025c50c8b, type: 3}
+  - {fileID: 8300000, guid: eb115245c30cb9749b0b4818a6deadc2, type: 3}
+  - {fileID: 8300000, guid: 23835e165bb79b94985cd79ed7894e37, type: 3}

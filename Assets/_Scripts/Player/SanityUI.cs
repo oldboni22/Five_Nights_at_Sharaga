@@ -14,7 +14,7 @@ public class SanityUI : MonoBehaviour, IUpdateable
         if(_slider.value != _player.Sanity.CurSanity)
         {
             _slider.value = Mathf.Lerp(_slider.value, _player.Sanity.CurSanity, Time.deltaTime + 0.015f);
-            _text.text = $"Sanity - {_player.Sanity.CurSanity}%";
+            _text.text = $"Sanity - {_player.Sanity.CurSanity.ToString("n1")}%";
         }
     }
 }
