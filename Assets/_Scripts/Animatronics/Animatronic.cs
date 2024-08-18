@@ -11,11 +11,15 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
     [SerializeField] protected ushort _ticksToAction;
     [SerializeField] protected ushort _failedTicksLimit;
     protected ushort _succeded;
+    protected bool _isObserved = false;
+
 
     protected bool _doTurns = true;
     protected bool _countSucces = true;
 
     [Inject] protected IRoomsController _roomsController;
+    [Inject] protected IPlayer _player;
+
     [SerializeField] protected string _id;
     public string Id => _id;
     protected int _failedTicks;
@@ -63,7 +67,7 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
         _succeded++;
         if (_succeded >= _ticksToAction)
             Action();
-        Debug.Log($"{_id} - Turn succeed!");
+        Debug.Log($"{_id} - Turn succeed! - " + _succeded + " succeded");
     }
     protected virtual void OnFailedLimitReached()
     {
@@ -83,6 +87,7 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
 
     protected void MoveToRoom(string roomId)
     {
+        Debug.Log(_id + " Moved to " + roomId);
         _curRoom?.AnimatronicLeave(this);
         _curRoom = _roomsController.GetRoomById(roomId);
         _curRoom.AnimatronicEnter(this);
@@ -90,6 +95,7 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
 
     protected void LeaveRoom() 
     {
+        Debug.Log(_id + " left " + _curRoom.Id);
         _curRoom?.AnimatronicLeave(this);
         _curRoom = null;
     }
@@ -104,14 +110,19 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
     public virtual void OnCameraDetect()
     {
         Debug.Log($"{gameObject.name} - detected");
+        _isObserved = true;
     }
     public virtual void OnCameraLeave()
     {
-        Debug.Log($"{gameObject.name} - detected");
+        Debug.Log($"{gameObject.name} - left camera vision");
+        _isObserved = false;
     }
 
     public virtual void OnUpdate() { }
     #endregion
 
-
+    protected async void Kill()
+    {
+        await _player.Death(_id);
+    }
 }

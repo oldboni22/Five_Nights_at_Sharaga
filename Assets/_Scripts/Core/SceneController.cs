@@ -4,13 +4,20 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
-public class SceneController : MonoBehaviour 
+public interface ISceneController
 {
+    public void StopUpdate();
+}
+
+public class SceneController : MonoBehaviour, ISceneController
+{
+    private bool _doUpdate = true;
+
     [Inject] private IServiceManager _service;
     [Inject] private IClock _clock;
     [Inject] private IActionPointsManager _actionPointsManager;
 
-    [SerializeField] private IAwakable[] _awakeables;
+
     [SerializeField] private IUpdateable[] _updateables;
     [SerializeField] private IFixedUpdateable[] _fixedUpdateables;
     [SerializeField] private IClockable[] _clockables;
@@ -19,14 +26,10 @@ public class SceneController : MonoBehaviour
 
     private void Awake()
     {
-        _awakeables = GetComponentsInChildren<IAwakable>();
-        _updateables = GetComponentsInChildren<IUpdateable>();
-        _fixedUpdateables = GetComponentsInChildren<IFixedUpdateable>();
-        _clockables = GetComponentsInChildren<IClockable>();
-
+        Debug.Log("Awake");
 
         _clock.OnAwake();
-        foreach (var awakeable in _awakeables)
+        foreach (var awakeable in GetComponentsInChildren<IAwakable>())
         {
             awakeable.OnAwake();
         }
@@ -34,6 +37,12 @@ public class SceneController : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Start");
+
+        _updateables = GetComponentsInChildren<IUpdateable>();
+        _fixedUpdateables = GetComponentsInChildren<IFixedUpdateable>();
+        _clockables = GetComponentsInChildren<IClockable>();
+
         _clock.SetTimeToTick(_clockRate);
         foreach (var clockable in _clockables)
             _clock.Add(clockable);
@@ -41,6 +50,9 @@ public class SceneController : MonoBehaviour
 
     private void Update()
     {
+        if (_doUpdate is false)
+            return;
+
         _service.OnUpdate();
         _clock.OnUpdate();
         foreach(var updateable in _updateables)
@@ -49,9 +61,14 @@ public class SceneController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(_doUpdate is false)
+            return;
+
         _actionPointsManager.OnFixedUpdate();
         foreach (var updateable in _fixedUpdateables)
             updateable.OnFixedUpdate();
     }
 
+
+    public void StopUpdate() => _doUpdate = false;
 }

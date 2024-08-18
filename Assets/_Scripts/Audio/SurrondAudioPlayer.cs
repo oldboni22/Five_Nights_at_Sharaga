@@ -20,6 +20,16 @@ public class SurrondAudioPlayer : MonoBehaviour
         float duration = clip.length;
         StartCoroutine(StartPlaying(duration, clip));
     }
+    internal void OnCancelCall(string id)
+    {
+        if (gameObject.activeInHierarchy is false)
+            return;
+        if (id == _soundId ^ id == null)
+        {
+            StopPlaying();
+        }
+
+    }
     public void LoopAudio(AudioClip clip, Vector2 position)
     {
         transform.position = position;
@@ -58,12 +68,14 @@ public class SurrondAudioPlayer : MonoBehaviour
 
     public class Pool : MonoMemoryPool<SurrondAudioPlayer>
     {
+        private event Action<string> _onCancellCall;
         readonly List<SurrondAudioPlayer> _players = new List<SurrondAudioPlayer>();
 
         protected override void OnCreated(SurrondAudioPlayer item)
         { 
             base.OnCreated(item);
             _players.Add(item);
+            _onCancellCall += item.OnCancelCall;
             item.SetPool(this);
         }
 
@@ -74,12 +86,9 @@ public class SurrondAudioPlayer : MonoBehaviour
             player._source.volume = volume;
             player.PlayAudio(clip, position);
         }
-        public void StopAudio(string clipName)
+        public void StopAudio(string? clipName)
         {
-            foreach (var player in _players.Where(x => x.SoundId == clipName))
-            {
-                player.StopPlaying();
-            }
+            _onCancellCall?.Invoke(clipName);
         }
         public void LoopAudio(AudioClip clip, Vector2 position, float volume, int prio)
         {

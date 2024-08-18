@@ -7,14 +7,11 @@ public class PhantomBB : Animatronic
 {
     [SerializeField] private float _sanityeReduction;
     [SerializeField] private ushort _failedToLeave;
-
-    [Inject] IPlayer _player;
     [Inject] OverlayImage.Pool _overlayPool;
     [SerializeField] private Sprite _sprite;
 
 
     private bool _isPresent = false;
-    private bool _isObserved = false;
 
     protected override void OnFailedLimitReached()
     {
@@ -46,15 +43,6 @@ public class PhantomBB : Animatronic
         _isPresent = false;
         _curRoom.RemoveOverlayImage(_id);
         LeaveRoom();
-    }
-
-    public override void OnCameraDetect()
-    {
-        _isObserved = true;
-    }
-    public override void OnCameraLeave()
-    {
-        _isObserved = false;
     }
 
     public override void OnUpdate()

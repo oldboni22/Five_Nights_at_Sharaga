@@ -10,8 +10,6 @@ public class PipkiPopki : Animatronic
 
     [SerializeField] private float _volume;
 
-
-    [Inject] private IPlayer _player;
     [Inject] private PipkiPopkiStorage _pipki;
     [Inject] private SurrondAudioPlayer.Pool _3dAudioPool;
     [Inject] private AudioPlayer.Pool _audioPool;
@@ -20,10 +18,9 @@ public class PipkiPopki : Animatronic
     private string _curId;
 
     [Inject]
-    public void Inject(IPlayer player, PipkiPopkiStorage pipki, SurrondAudioPlayer.Pool audioPool3d, AudioPlayer.Pool audioPool)
+    public void Inject( PipkiPopkiStorage pipki, SurrondAudioPlayer.Pool audioPool3d, AudioPlayer.Pool audioPool)
     {
         _pipki = pipki;
-        _player = player;
         _3dAudioPool = audioPool3d;
         _audioPool = audioPool;
     }

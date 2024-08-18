@@ -21,10 +21,9 @@ public class AudioPlayer : MonoBehaviour
 
     internal void OnCancelCall(string id)
     {
-
         if (gameObject.activeInHierarchy is false)
             return;
-        if (id == _clipID)
+        if (id == _clipID ^ id == null)
         {
             StopPlaying();
         }
@@ -96,13 +95,9 @@ public class AudioPlayer : MonoBehaviour
             player._source.priority = prio;
             player._source.Play();
         }
-        public void StopAudio(string id)
+        public void StopAudio(string? id)
         {
             _onCancellCall.Invoke(id);
-        }
-        public void StopAudio(AudioClip clip)
-        {
-            _onCancellCall.Invoke(clip.name);
         }
 
     }

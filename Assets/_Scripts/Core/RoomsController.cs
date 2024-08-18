@@ -17,15 +17,25 @@ public class RoomsController : MonoBehaviour, IRoomsController
             cameraBreakTime = _cameraBreakTime,
         });
     }
+
+    public void BlackOut(float duration)
+    {
+        foreach(var r in _rooms)
+        {
+            r.Blackout(duration);
+        }
+    }
+
     public RoomHandler GetRandomRoom() => _rooms[Random.Range(1,_rooms.Count)];
 
     public string GetRandomRoomId() => _rooms[Random.Range(1, _rooms.Count)].Id;
-    public RoomHandler GetRoomById(string id) => _rooms.Where(room => room.Id == id).Single();
+    public RoomHandler GetRoomById(string id) => _rooms.Single(room => room.Id == id);
 
 }
 
 public interface IRoomsController
 {
+    public void BlackOut(float duration);
     public RoomHandler GetRandomRoom();
     public string GetRandomRoomId();
     public RoomHandler GetRoomById(string id);

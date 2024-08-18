@@ -7,6 +7,7 @@ public class NewD : Animatronic
 {
 
     [SerializeField] private float _drain;
+    [SerializeField] private float _chargingDrain;
 
     private string _curName;
 
@@ -64,6 +65,8 @@ public class NewD : Animatronic
         base.OnUpdate();
         if (_isPresent && _newd.IsCharged is false)
             _newd.Drain(_drain);
+        else if(_isPlaying && _newd.IsCharged)
+            _newd.Drain(_chargingDrain);
     }
 
     void PlayRandomClip()

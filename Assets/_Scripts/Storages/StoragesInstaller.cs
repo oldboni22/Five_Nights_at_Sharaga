@@ -11,6 +11,7 @@ public class StoragesInstaller : ScriptableObjectInstaller<StoragesInstaller>
     [SerializeField] private PipkiPopkiStorage _pipkiPopki;
     [SerializeField] private NewdStorage _newD;
     [SerializeField] private RandomSoundStorage _randomSounds;
+    [SerializeField] private AnimatronicSpriteStorage _animatronics;
     public override void InstallBindings()
     {
         Container.Bind<AnimatronicsDifficulty>().FromInstance(_animatronicsDifficulty).AsCached().NonLazy();
@@ -20,6 +21,7 @@ public class StoragesInstaller : ScriptableObjectInstaller<StoragesInstaller>
         Container.Bind<PipkiPopkiStorage>().FromInstance(_pipkiPopki).AsCached().NonLazy();
         Container.Bind<NewdStorage>().FromInstance(_newD).AsCached().NonLazy();
         Container.Bind<RandomSoundStorage>().FromInstance(_randomSounds).AsCached().NonLazy();
+        Container.Bind<AnimatronicSpriteStorage>().FromInstance(_animatronics).AsCached().NonLazy();
 
     }
 }

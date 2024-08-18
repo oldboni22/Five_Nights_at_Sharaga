@@ -3,10 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+
+
+public interface IAnimatronicController
+{
+    
+}
 public class AnimatronicsController : MonoBehaviour, IClockable, IAwakable, IUpdateable
 {
     [Inject] private AnimatronicsDifficulty _animatronicsDifficulty;
     [SerializeField] private List<Animatronic> _animatronics;
+
+    public Sprite GetAnimatronicSprite(string id)
+    {
+        throw new NotImplementedException();
+    }
 
     #region Interfaces
     public void OnAwake()
@@ -31,7 +42,7 @@ public class AnimatronicsController : MonoBehaviour, IClockable, IAwakable, IUpd
     {
         foreach (var animatromic in _animatronics)
         {
-            ushort random = Convert.ToUInt16(UnityEngine.Random.Range(0, 125));
+            ushort random = Convert.ToUInt16(UnityEngine.Random.Range(0, 210));
             animatromic.Turn(random);
         }
     }

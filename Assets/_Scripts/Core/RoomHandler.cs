@@ -12,12 +12,14 @@ public struct RoomParams
 }
 public class RoomHandler : MonoBehaviour, IUpdateable
 {
+    [SerializeField] private string _floorString;
+    public string FloorString => _floorString;
 
     #region variables
     private IAudioListenerController _audioListenerController;
     private ICameraButtonsController _cameraButtonsController;
     private OverlayImage.Pool _overlayPool;
-    
+
     [SerializeField] private DigitalGlitch _glitch;
     [SerializeField] private string _id;
     public string Id => _id;
@@ -34,7 +36,8 @@ public class RoomHandler : MonoBehaviour, IUpdateable
 
     [SerializeField] Image _image;
 
-    [Inject] public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages, ICameraButtonsController cameraButtonsController, OverlayImage.Pool overlayPool, IRoomsController roomsController)
+    [Inject]
+    public void Inject(IAudioListenerController audioListenerController, CameraImagesStorage cameraImages, ICameraButtonsController cameraButtonsController, OverlayImage.Pool overlayPool, IRoomsController roomsController)
     {
         _audioListenerController = audioListenerController;
         _imageHandler = new RoomImageHandler(cameraImages.GetMemberById(_id), _image);
@@ -68,7 +71,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
             return;
 
         _curCameraBreak += Time.deltaTime;
-        if(_curCameraBreak >= _cameraBreakTime)
+        if (_curCameraBreak >= _cameraBreakTime)
         {
             DisableCamera();
             _curCameraBreak = 0;
@@ -142,17 +145,40 @@ public class RoomHandler : MonoBehaviour, IUpdateable
     }
     #endregion
 
+    public void Blackout(float dur)
+    {
+        if(_id != "main")
+            StartCoroutine(BlackOut(dur));
+    }
+
+    IEnumerator BlackOut(float dur)
+    {
+        bool wasEnabled = _enabled;
+        DisableCamera();
+        
+        yield return new WaitForSeconds(dur);
+
+        if (wasEnabled)
+            EnableCamera();
+
+    }
+
+
+
     public void ConnectTo()
     {
         _camera.enabled = true;
 
         if (_enabled)
+        {
+            _room.OnCameraOpened();
             _audioListenerController.LoccateTo(transform.position);
+        }
+
         else
             _audioListenerController.Resset();
 
-        if(_enabled)
-            _room.OnCameraOpened();
+
 
         if (_glitch != null)
             StartCoroutine(CameraOpenedGlitch(.3f));
@@ -165,14 +191,13 @@ public class RoomHandler : MonoBehaviour, IUpdateable
 
     public void DisconnectFrom()
     {
-
-        if(_enabled)
+        if (_enabled)
             _room.OnCameraLeft();
 
         _camera.enabled = false;
     }
 
-    
+
 
     internal class RoomImageHandler
     {
@@ -181,9 +206,9 @@ public class RoomHandler : MonoBehaviour, IUpdateable
 
         private readonly List<string> _curAnimatronics = new List<string>();
         private string _curId;
-        
 
-        bool TryGetSprite(string id,out Sprite sprite)
+
+        bool TryGetSprite(string id, out Sprite sprite)
         {
             sprite = null;
             if (_array.Exists(id))
@@ -197,7 +222,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
             _curAnimatronics.Add(animatronicId);
 
             Sprite sprite = null;
-            if(TryGetSprite(animatronicId,out sprite))
+            if (TryGetSprite(animatronicId, out sprite))
             {
                 _image.sprite = sprite;
                 _curId = animatronicId;

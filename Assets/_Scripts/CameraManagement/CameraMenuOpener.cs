@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class CameraMenuOpener : MonoBehaviour, IAwakable
 {
@@ -15,11 +16,15 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
 
     [SerializeField] private GameObject _blocker;
     [SerializeField] private RectTransform _transform;
-    
+
+    [Inject]
+    public void Inject(IOpenCameraButton button) => button.AddOnClickListener(OnClick);
+
 
     public void OnAwake()
     {
-        _startX = _transform.localPosition.x;   
+        _startX = _transform.localPosition.x;
+        Debug.Log(_startX);
     }
 
     public void OnClick()

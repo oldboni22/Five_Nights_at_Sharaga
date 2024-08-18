@@ -19,3 +19,4 @@ MonoBehaviour:
   _pipkiPopki: {fileID: 11400000, guid: df36b1b625627244ca39e1ac6093f867, type: 2}
   _newD: {fileID: 11400000, guid: 84efc0e98c0f9a641b1b5faf15e52145, type: 2}
   _randomSounds: {fileID: 11400000, guid: cb86497deca12e84398a3a5401d98ea1, type: 2}
+  _animatronics: {fileID: 11400000, guid: a68d53384dba73440a8a8fa6112622a6, type: 2}

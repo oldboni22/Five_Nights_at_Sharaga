@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 using Zenject;
 
 
@@ -9,6 +11,7 @@ public interface ICameraControler
 {
     public void OpenCamera(string cameraId);
     public RoomHandler CurRoom { get; }
+
 }
 public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpdateable
 {
@@ -45,6 +48,9 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
     public RoomHandler CurRoom => _curRom;
 
     private string mainCameraId;
+
+    [Inject]
+    public void Inject(IOpenCameraButton button) => button.AddOnClickListener(ToggleCamera);
 
     public void ToggleCamera()
     {
@@ -88,4 +94,5 @@ public class CameraController : MonoBehaviour, IAwakable, ICameraControler, IUpd
         if(_curRom.Id != _startCameraId)
             _curRom.OnUpdate();
     }
+
 }

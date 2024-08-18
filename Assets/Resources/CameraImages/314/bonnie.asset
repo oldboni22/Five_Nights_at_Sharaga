@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6822fc5cec53ec3489f4d5a40367a25c, type: 3}
-  m_Name: 3f array
+  m_Script: {fileID: 11500000, guid: f091405f5783833459f6c5533a00c6cc, type: 3}
+  m_Name: bonnie
   m_EditorClassIdentifier: 
-  _roomId: 3f
-  _sprites:
-  - {fileID: 11400000, guid: fc9b24d4fc96d804fafd3ef964775071, type: 2}
+  _sprite: {fileID: 21300000, guid: 5d78631d2b669334c962b2186faedc3b, type: 3}
+  _id: bonnie
