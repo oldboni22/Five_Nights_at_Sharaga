@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aba139081a13ab4483ac59177568330, type: 3}
+  m_Name: Nightmare
+  m_EditorClassIdentifier: 
+  _sprite: {fileID: 21300000, guid: 7183d64986b6e4c44b00e21859a2bf39, type: 3}
+  _id: nightmare

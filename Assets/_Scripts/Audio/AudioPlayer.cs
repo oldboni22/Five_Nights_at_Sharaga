@@ -95,10 +95,14 @@ public class AudioPlayer : MonoBehaviour
             player._source.priority = prio;
             player._source.Play();
         }
+
+#nullable enable
+
         public void StopAudio(string? id)
         {
             _onCancellCall.Invoke(id);
         }
+#nullable disable
 
     }
 

@@ -10,6 +10,7 @@ public interface IActionPointsManager : IFixedUpdateable
     public void DisableAction(ActionEnum action, float dur);
     public void AddPoints(ushort points);
     public void AddOnChargeEventListener(Action<float> @delegate);
+    public void AddOnGasEventListener(Action @delegate);
     public void AddOnPointsEventListener(Action<int> @delegate);
     public void AddOnDisableCallListener(Action<ActionEnum, float> @delegate);
     public bool Gas(ushort cost);
@@ -24,6 +25,7 @@ public class ActionPointsManager : IActionPointsManager
 
     private ushort _pillsUsageCount = 0;
 
+    private event Action _onGas;
     private event Action<ActionEnum,float> _onDisableCall; 
     private event Action<float> _onActionChargeChanged;
     private event Action<int> _onActionPointsChanged;
@@ -37,7 +39,7 @@ public class ActionPointsManager : IActionPointsManager
     private ushort _points;
 
     private float _pointCharge;
-    private readonly float _pointGain = 0.125f;
+    private readonly float _pointGain = .125f;
 
     public ushort Points => _points;
 
@@ -91,6 +93,7 @@ public class ActionPointsManager : IActionPointsManager
         if (SpendPoints(cost))
         {
             _cameraControler.CurRoom.GasRoom();
+            _onGas?.Invoke();
             return true;
         }
         return false;
@@ -145,6 +148,11 @@ public class ActionPointsManager : IActionPointsManager
     public void DisableAction(ActionEnum action,float dur)
     {
         _onDisableCall.Invoke(action,dur);
+    }
+
+    public void AddOnGasEventListener(Action @delegate)
+    {
+        _onGas += @delegate;
     }
 }
 

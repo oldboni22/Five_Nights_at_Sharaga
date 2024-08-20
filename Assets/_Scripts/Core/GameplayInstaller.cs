@@ -3,6 +3,7 @@ using Zenject;
 
 public class GameplayInstaller : MonoInstaller
 {
+    [SerializeField] private VentButton _vent;
     [SerializeField] private RoomsController _roomsController;
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private CameraButtonsController _cameraButtonsController;
@@ -22,6 +23,7 @@ public class GameplayInstaller : MonoInstaller
     {
 
         Container.Bind<ISceneController>().To<SceneController>().FromInstance(_sceneController).AsSingle().NonLazy();
+        Container.Bind<IVentButton>().To<VentButton>().FromInstance(_vent).AsSingle().Lazy();
         Container.Bind<IScreamerUI>().To<ScreamerUi>().FromInstance(_screamerUi).AsSingle().Lazy();
         Container.Bind<IOpenCameraButton>().To<OpenCameraButton>().FromInstance(_openCameraButton).AsCached().NonLazy();
 

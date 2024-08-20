@@ -15,7 +15,7 @@ public class Player : IPlayer
     public PlayerSanity Sanity => _sanity; 
     public Player()
     {
-        _sanity = new PlayerSanity();
+        _sanity = new PlayerSanity(this);
     }
 
     public async Task Death(string id)
@@ -31,6 +31,7 @@ public class Player : IPlayer
 
         await Task.Delay(2750);
 
+        SceneOpener.OpenMainScene();
 
     }
 }
