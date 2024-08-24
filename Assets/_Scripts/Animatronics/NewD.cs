@@ -61,13 +61,13 @@ public class NewD : Animatronic
 
         _audioPool.StopAudio(_curName);
 
-        _isPresent = false;
+        
         _isPlaying = false;
     }
     public override void OnUpdate()
     {
         base.OnUpdate();
-        if (_isPresent && _newd.IsCharged is false)
+        if (_isPresent && _newd.IsStalled is false )
             _newd.Drain(_drain);
         else if(_isPlaying && _newd.IsCharged)
             _newd.Drain(_chargingDrain);
@@ -75,6 +75,7 @@ public class NewD : Animatronic
 
     void PlayRandomClip()
     {
+        _isPresent = false;
         _clock.ChangeClockMod(_tickRateChange);
         var clip = _newdStorage.GetRandom();
         _curName = clip.name;

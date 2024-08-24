@@ -4,8 +4,8 @@ using Zenject;
 using Kino;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using DG.Tweening;
 
 public struct RoomParams
 {
@@ -24,6 +24,8 @@ public class RoomHandler : MonoBehaviour, IUpdateable
     [SerializeField] private DigitalGlitch _glitch;
     [SerializeField] private string _id;
     public string Id => _id;
+
+    private Tween _tween;
 
     private float _cameraBreakTime;
     private float _curCameraBreak;
@@ -50,11 +52,44 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         roomsController.AddRoom(this);
     }
 
+   
+
     public void SetParams(RoomParams @params)
     {
         _cameraBreakTime = @params.cameraBreakTime;
     }
 
+    #endregion
+
+
+
+    #region DOTween
+    private void Start()
+    {
+        if (_id == "main")
+            return;
+
+        var trans = _image.GetComponent<RectTransform>();
+        trans.localScale = new Vector3(1.25f, 1, 1);
+        trans.DOLocalMoveX(220, .1f);
+
+        _tween = trans.DOLocalMoveX(-220, _cameraBreakTime / 4).SetLoops(-1, LoopType.Yoyo);
+        _tween.Pause();
+    }
+
+    void EnableTween()
+    {
+        _tween?.Play();
+    }
+    void DisableTween()
+    {
+        _tween?.Pause();
+    }
+
+    private void OnDestroy()
+    {
+        _tween?.Kill();
+    }
     #endregion
 
     #region Interfaces
@@ -89,6 +124,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         {
             _room.OnCameraLeft();
             _audioListenerController.Resset();
+            DisableTween();
         }
     }
     public void EnableCamera()
@@ -97,6 +133,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         {
             _audioListenerController.LoccateTo(transform.position);
             _room.OnCameraOpened();
+            EnableTween();
         }
 
         _glitch.intensity = .1f;
@@ -179,6 +216,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
 
         if (_enabled)
         {
+            EnableTween();
             _room.OnCameraOpened();
             _audioListenerController.LoccateTo(transform.position);
         }
@@ -200,7 +238,10 @@ public class RoomHandler : MonoBehaviour, IUpdateable
     public void DisconnectFrom()
     {
         if (_enabled)
+        {
             _room.OnCameraLeft();
+            DisableTween();
+        }
 
         _camera.enabled = false;
     }

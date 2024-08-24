@@ -12,6 +12,7 @@ public interface ISceneController
 public class SceneController : MonoBehaviour, ISceneController
 {
     private bool _doUpdate = true;
+    [SerializeField] private NightStartUi _ui;
 
     [Inject] private IServiceManager _service;
     [Inject] private IClock _clock;
@@ -25,15 +26,20 @@ public class SceneController : MonoBehaviour, ISceneController
 
     [SerializeField] private float _clockRate;
 
-    private void Awake()
+    private async void Awake()
     {
+        _doUpdate = false;
         Debug.Log("Awake");
+
+        await _ui.PlayAnimation();
+
 
         _player.OnAwake();
         foreach (var awakeable in GetComponentsInChildren<IAwakable>())
         {
             awakeable.OnAwake();
         }
+        _doUpdate = true;
     }
 
     private void Start()

@@ -5,14 +5,16 @@ using UnityEngine;
 public class NewDCharge : IUpdateable
 {
     public bool IsCharged => _isCharged;
+    public bool IsStalled => _isStalled;
 
     private event Action _onChargeEnded;
     private event Action<float> _onChargeChanged;
     private event Action _onFullCharged;
 
-
-    private float _lastTimeCharged;
+    private float _stalled;
+    private float _charge;
     private bool _isCharged = false;
+    private bool _isStalled = false;
     private float _chargeAmount = 1;
 
     public void AddOnChargeEndedListener(Action action) => _onChargeEnded += action;
@@ -29,7 +31,10 @@ public class NewDCharge : IUpdateable
             return;
         }
 
-        _lastTimeCharged = .75f;
+        _stalled = 1.25f;
+        _charge = .2f;
+
+        _isStalled = true;
         _isCharged = true;
 
 
@@ -52,11 +57,20 @@ public class NewDCharge : IUpdateable
     {
         if (_isCharged)
         {
-            _lastTimeCharged -= Time.deltaTime;
-            if (_lastTimeCharged <= 0)
+            _charge -= Time.deltaTime;
+            if(_charge < 0)
             {
-                _lastTimeCharged = 0;
+                _charge = 0;
                 _isCharged = false;
+            }
+        }
+        if (_isStalled)
+        {
+            _stalled -= Time.deltaTime;
+            if (_stalled < 0)
+            {
+                _stalled = 0;
+                _isStalled = false;
             }
 
         }
