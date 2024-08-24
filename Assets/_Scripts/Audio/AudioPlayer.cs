@@ -97,7 +97,11 @@ public class AudioPlayer : MonoBehaviour
         }
 
 #nullable enable
-
+        public void StopAudioByClipId(string id)
+        {
+            string name = _soundStorage.GetMemberById(id).Clip.name;
+            _onCancellCall.Invoke(name);
+        }
         public void StopAudio(string? id)
         {
             _onCancellCall.Invoke(id);

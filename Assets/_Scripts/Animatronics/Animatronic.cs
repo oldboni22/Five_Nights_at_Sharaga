@@ -121,8 +121,8 @@ public abstract class Animatronic : MonoBehaviour, IUpdateable
     public virtual void OnUpdate() { }
     #endregion
 
-    protected async void Kill()
+    protected void Kill()
     {
-        await _player.Death(_id);
+        _player.Death(_id);
     }
 }

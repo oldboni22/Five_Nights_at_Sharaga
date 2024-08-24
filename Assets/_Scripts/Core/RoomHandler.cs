@@ -5,6 +5,7 @@ using Kino;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 public struct RoomParams
 {
@@ -83,19 +84,25 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         _enabled = false;
         _cameraButtonsController.SetColor(_id, CameraButtonColor.broken);
 
-        _room.OnCameraLeft();
+
         if (_camera.enabled)
+        {
+            _room.OnCameraLeft();
             _audioListenerController.Resset();
+        }
     }
     public void EnableCamera()
     {
-        _audioListenerController.LoccateTo(transform.position);
+        if (_camera.enabled)
+        {
+            _audioListenerController.LoccateTo(transform.position);
+            _room.OnCameraOpened();
+        }
 
         _glitch.intensity = .1f;
         _enabled = true;
         _cameraButtonsController.SetColor(_id, CameraButtonColor.fine);
-        _room.OnCameraOpened();
-
+        
         StartCoroutine(CameraOpenedGlitch(.15f));
     }
     IEnumerator CameraOpenedGlitch(float delay)
@@ -132,7 +139,8 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         _imageHandler.HandleAnimatronicLeave(animatronic.Id);
         StartCoroutine(CameraOpenedGlitch(.22f));
 
-        animatronic.OnCameraLeave();
+        if (_camera.enabled)
+            animatronic.OnCameraLeave();
     }
     public void AnimatronicEnter(Animatronic animatronic)
     {
@@ -204,52 +212,51 @@ public class RoomHandler : MonoBehaviour, IUpdateable
         private readonly RoomSpriteArray _array;
         private readonly Image _image;
 
-        private readonly List<string> _curAnimatronics = new List<string>();
-        private string _curId;
+        private readonly List<RoomSprite> _curAnimatronics = new List<RoomSprite>();
+        private RoomSprite _cur;
 
 
-        bool TryGetSprite(string id, out Sprite sprite)
+        bool TryGetSprite(string id, out RoomSprite sprite)
         {
             sprite = null;
             if (_array.Exists(id))
-                sprite = _array.GetMemberById(id).Sprite;
+                sprite = _array.GetMemberById(id);
 
             return sprite != null;
         }
 
+        void SetSprite(RoomSprite sprite)
+        {
+            _image.sprite = sprite.Sprite;
+            _cur = sprite;
+        }
         internal void HandleAnimatronicEnter(string animatronicId)
         {
-            _curAnimatronics.Add(animatronicId);
-
-            Sprite sprite = null;
+            RoomSprite sprite = null;
             if (TryGetSprite(animatronicId, out sprite))
             {
-                _image.sprite = sprite;
-                _curId = animatronicId;
+                if (sprite.Prio > _cur.Prio)
+                {
+                    SetSprite(sprite);
+                }
+                _curAnimatronics.Add(sprite);
             }
         }
         internal void HandleAnimatronicLeave(string animatronicId)
         {
-            _curAnimatronics.Remove(animatronicId);
 
-            if (animatronicId != _curId)
+            if (_array.Exists(animatronicId) is false ^ animatronicId != _cur.Id)
                 return;
+
+            _curAnimatronics.Remove(_cur);
 
             if (_curAnimatronics.Count != 0)
             {
-                Sprite sprite = null;
-                foreach (var id in _curAnimatronics)
-                {
-                    if (TryGetSprite(id, out sprite))
-                    {
-                        _image.sprite = sprite;
-                        _curId = id;
-                        return;
-                    }
-                }
+                var biggestPrio = _curAnimatronics.OrderByDescending(i => i.Prio).First();
+                SetSprite(biggestPrio);
             }
-
-            _image.sprite = _array.GetMemberById("0").Sprite;
+            else
+                SetSprite(_array.GetMemberById("0"));
 
         }
 
@@ -258,7 +265,7 @@ public class RoomHandler : MonoBehaviour, IUpdateable
             _array = array;
             _image = image;
 
-            _image.sprite = _array.GetMemberById("0").Sprite;
+            SetSprite(_array.GetMemberById("0"));
         }
     }
 }

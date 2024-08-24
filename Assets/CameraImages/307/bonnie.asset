@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: f5cc8835b6ecf7c4c926909e3e739208, type: 3}
   _id: bonnie
+  _prio: 10

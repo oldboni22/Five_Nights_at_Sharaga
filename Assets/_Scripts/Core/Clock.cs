@@ -7,12 +7,13 @@ using Zenject;
 
 public class Clock : IClock
 {
-    [Inject] IPlayer _player;
 
     private readonly List<IClockable> _clockables = new List<IClockable>();
 
     private float _timer = 0;
     private float _timeToTick;
+
+    private float _timeMod = 0;
     private float _sanityVar;
 
     public void Tick()
@@ -30,11 +31,11 @@ public class Clock : IClock
     public void OnUpdate()
     {
         _timer += Time.deltaTime;
-        if(_timer >= _timeToTick - _sanityVar)
+        if(_timer >= _timeToTick - _timeMod - _sanityVar)
         {
             Tick();
             _timer = 0;
-            Debug.Log(_timeToTick - _sanityVar + " - Time to next tick");
+            Debug.Log(_timeToTick - _timeMod - _sanityVar + " - Time to next tick");
 
         }
         
@@ -45,43 +46,25 @@ public class Clock : IClock
         _timeToTick = time;
     }
 
-    public void OnSanityChanged(float val)
+
+    public void ChangeClockMod(float val)
     {
-        float GetMultiplyer(float sanity)
-        {
-            if (sanity >= 75)
-                return .075f;
-            else if (sanity >= 50)
-                return .1f;
-            else if (sanity >= 25)
-                return .125f;
-            else return .15f;
-        }
-
-        if (val == 0)
-        {
-
-            _sanityVar = 3f;
-        }
-        else
-        {
-            _sanityVar = 1 - val / 100;
-
-            _sanityVar += ((Int16)(100 - val) / 10) * GetMultiplyer(val);
-        }
+        _timeMod += val;
     }
-    
-    public void OnAwake()
+
+    public void SetSanityVar(float val)
     {
-        _player.Sanity.AddOnChangedListener(OnSanityChanged);
+        _sanityVar = val;
     }
 }
 
-public interface IClock : IUpdateable, IAwakable
+public interface IClock : IUpdateable
 {
     public void Tick();
     public void Add(IClockable clockable);
     public void Remove(IClockable clockable);
     public void SetTimeToTick(float time);
+    public void ChangeClockMod(float val);
+    public void SetSanityVar(float val);
 
 }

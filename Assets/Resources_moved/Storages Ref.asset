@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 043bf0b80addb5a4d8af00709754b992, type: 3}
-  m_Name: Storages
+  m_Script: {fileID: 11500000, guid: 1fe5fd8a7bf593140966f83e1c02f005, type: 3}
+  m_Name: Storages Ref
   m_EditorClassIdentifier: 
   _animatronicsDifficulty: {fileID: 11400000, guid: b2e842b6cdebffc4fa6f482c4afc2504, type: 2}
   _cameraImagesStorage: {fileID: 11400000, guid: 6cbe03ed192882c46928e7671fac1796, type: 2}
@@ -20,3 +20,4 @@ MonoBehaviour:
   _newD: {fileID: 11400000, guid: 84efc0e98c0f9a641b1b5faf15e52145, type: 2}
   _randomSounds: {fileID: 11400000, guid: cb86497deca12e84398a3a5401d98ea1, type: 2}
   _animatronics: {fileID: 11400000, guid: a68d53384dba73440a8a8fa6112622a6, type: 2}
+  _jumperLayoutStorage: {fileID: 11400000, guid: aae00b43ea5ca304d97e468246bf539c, type: 2}

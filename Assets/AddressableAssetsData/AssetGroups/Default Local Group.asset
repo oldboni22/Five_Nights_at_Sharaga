@@ -21,6 +21,22 @@ MonoBehaviour:
     m_Address: Assets/Scenes/GamePlayScene.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 843938ce4d608864793496932960d585
+    m_Address: Assets/ScreamerUi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9e86506292ecbd24598cfd39b2c554b7
+    m_Address: Assets/Scenes/Minigame1.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: aae00b43ea5ca304d97e468246bf539c
+    m_Address: Jumper Layout Storage
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f43ce52d8c90aa94c838f31fdc1928ff
+    m_Address: Assets/Resources_moved/Storages Ref.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 789fb12ae618c194fbe80f2e418e631b, type: 2}
   m_SchemaSet:

@@ -8,22 +8,25 @@ public class NewD : Animatronic
 
     [SerializeField] private float _drain;
     [SerializeField] private float _chargingDrain;
-
+    [SerializeField] private float _tickRateChange;
+    
     private string _curName;
 
     private bool _isPresent = false;
     private bool _isPlaying = false;
 
+    private IClock _clock;
     private AudioPlayer.Pool _audioPool;
     private NewDCharge _newd;
     private NewdStorage _newdStorage;
 
     [Inject]
-    public void Inject(IServiceManager service, AudioPlayer.Pool pool, NewdStorage newdStorage)
+    public void Inject(IServiceManager service, AudioPlayer.Pool pool, NewdStorage newdStorage,IClock clock )
     {
         _audioPool = pool;
         _newd = service.GetCharge();
         _newdStorage = newdStorage;
+        _clock = clock;
     }
 
     private void Start()
@@ -53,6 +56,7 @@ public class NewD : Animatronic
         if (_isPlaying is false)
             return;
 
+        _clock.ChangeClockMod(-_tickRateChange);
         _doTurns = true;
 
         _audioPool.StopAudio(_curName);
@@ -71,6 +75,7 @@ public class NewD : Animatronic
 
     void PlayRandomClip()
     {
+        _clock.ChangeClockMod(_tickRateChange);
         var clip = _newdStorage.GetRandom();
         _curName = clip.name;
         _audioPool.LoopAudio(clip, 1, 255);

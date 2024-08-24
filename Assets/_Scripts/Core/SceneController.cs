@@ -16,6 +16,7 @@ public class SceneController : MonoBehaviour, ISceneController
     [Inject] private IServiceManager _service;
     [Inject] private IClock _clock;
     [Inject] private IActionPointsManager _actionPointsManager;
+    [Inject] private IPlayer _player;
 
 
     [SerializeField] private IUpdateable[] _updateables;
@@ -28,7 +29,7 @@ public class SceneController : MonoBehaviour, ISceneController
     {
         Debug.Log("Awake");
 
-        _clock.OnAwake();
+        _player.OnAwake();
         foreach (var awakeable in GetComponentsInChildren<IAwakable>())
         {
             awakeable.OnAwake();
