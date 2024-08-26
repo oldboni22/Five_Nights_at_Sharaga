@@ -1,37 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 public interface ISceneController
 {
     public void StopUpdate();
+    public event Action OnStoped;
 }
 
 public class SceneController : MonoBehaviour, ISceneController
 {
-    private bool _doUpdate = true;
-    [SerializeField] private NightStartUi _ui;
 
+    public event Action OnStoped;
+
+    private bool _doUpdate = true;
+    [SerializeField] private NightUi _ui;
+
+    [SerializeField] private AssetReference _minigameScene;
+    [Inject] private INightTimer _timer;
     [Inject] private IServiceManager _service;
     [Inject] private IClock _clock;
     [Inject] private IActionPointsManager _actionPointsManager;
     [Inject] private IPlayer _player;
 
 
-    [SerializeField] private IUpdateable[] _updateables;
-    [SerializeField] private IFixedUpdateable[] _fixedUpdateables;
-    [SerializeField] private IClockable[] _clockables;
+    private IUpdateable[] _updateables;
+    private IFixedUpdateable[] _fixedUpdateables;
+    private IClockable[] _clockables;
 
     [SerializeField] private float _clockRate;
 
     private async void Awake()
     {
+
+        _timer.OnHourPass += async (t) => await EndNight(t);
         _doUpdate = false;
         Debug.Log("Awake");
 
-        await _ui.PlayAnimation();
+        await _ui.PlayStartAnimation();
 
 
         _player.OnAwake();
@@ -54,6 +62,14 @@ public class SceneController : MonoBehaviour, ISceneController
         foreach (var clockable in _clockables)
             _clock.Add(clockable);
     }
+    async Task EndNight(ushort t)
+    {
+        if (t < 6) return;
+
+        StopUpdate();
+        await _ui.PlayEndAnimation();
+        SceneOpener.OpenScene(_minigameScene);
+    }
 
     private void Update()
     {
@@ -71,11 +87,17 @@ public class SceneController : MonoBehaviour, ISceneController
         if(_doUpdate is false)
             return;
 
+        _timer.OnFixedUpdate();
         _actionPointsManager.OnFixedUpdate();
         foreach (var updateable in _fixedUpdateables)
             updateable.OnFixedUpdate();
     }
 
 
-    public void StopUpdate() => _doUpdate = false;
+    public void StopUpdate()
+    {
+        _doUpdate = false;
+        OnStoped?.Invoke();
+    }
+
 }

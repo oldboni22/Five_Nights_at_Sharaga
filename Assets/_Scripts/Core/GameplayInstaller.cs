@@ -26,7 +26,10 @@ public class GameplayInstaller : MonoInstaller
         Container.Bind<IOpenCameraButton>().To<OpenCameraButton>().FromInstance(_openCameraButton).AsCached().NonLazy();
 
         Container.Bind<IActionPointsManager>().To<ActionPointsManager>().AsSingle().NonLazy();
+
+        Container.Bind<INightTimer>().To<NightTimer>().AsSingle().NonLazy();
         Container.Bind<IClock>().To<Clock>().AsSingle().NonLazy();
+
 
         Container.Bind<IPlayer>().To<Player>().FromNew().AsSingle().NonLazy();
         Container.Bind<IServiceManager>().To<ServiceManager>().FromNew().AsSingle().NonLazy();

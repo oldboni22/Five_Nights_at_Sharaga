@@ -79,10 +79,7 @@ public class AudioPlayer : MonoBehaviour
         }
         public void PlayAudio(string clip,float volume, int prio) 
         {
-            var player = this.Spawn();
-            player._source.volume = volume;
-            player._source.priority = prio;
-            player.PlayAudio(_soundStorage.GetMemberById(clip).Clip);
+            PlayAudio(_soundStorage.GetMemberById(clip).Clip,volume,prio);
         }
 
         public void LoopAudio(AudioClip clip,float volume, int prio)

@@ -31,12 +31,14 @@ public class ChicaCounter : MonoBehaviour
     }
 
     [Inject]
-    public void Inject(IActionPointsManager actionPointsManager, IPlayer player, AudioPlayer.Pool audio, IVentButton ventButton)
+    public void Inject(IActionPointsManager actionPointsManager, IPlayer player, AudioPlayer.Pool audio, IVentButton ventButton, ISceneController sceneController)
     {
         _player = player;
         actionPointsManager.AddOnGasEventListener(IncCounter);
         _actionPointsManager = actionPointsManager;
         _audio = audio;
+
+        sceneController.OnStoped += StopAllCoroutines;
 
         ventButton.AddOnClick(() => StartCoroutine(Resset()));
     }

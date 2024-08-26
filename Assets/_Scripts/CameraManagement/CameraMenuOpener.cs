@@ -42,11 +42,10 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
     private void OpenMenu()
     {
         _blocker.SetActive(true);
-        _transform.gameObject.SetActive(true);
 
         _enabled = true;
         _transform.DOKill();
-        _transform.DOLocalMoveX(_targetX, _duration).OnComplete(() => { _blocker.SetActive(false); });
+        _transform.DOAnchorPosX(_targetX, _duration).OnComplete(() => { _blocker.SetActive(false); });
     }
 
     private void CloseMenu()
@@ -55,6 +54,6 @@ public class CameraMenuOpener : MonoBehaviour, IAwakable
 
         _enabled = false;
         _transform.DOKill();
-        _transform.DOLocalMoveX(_startX, _duration).OnComplete(() => _transform.gameObject.SetActive(false));
+        _transform.DOAnchorPosX(_startX, _duration);
     }
 }
